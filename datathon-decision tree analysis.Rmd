@@ -1,0 +1,56 @@
+---
+title: "Untitled"
+author: "Stephanie Hosang"
+date: "September 22, 2018"
+output: html_document
+---
+
+Load libraries
+```{r}
+library(tidyverse)
+library(readxl)
+library(sqldf)
+library(car)
+library(mice)
+library(estimatr)
+library(caret)
+library(ggplot2)
+library(corrplot)
+```
+
+Load dataset from excel
+```{r}
+ds <- read_excel(file.choose(),sheet = "Case Data")
+colnames(ds)[2] <- "Age"
+colnames(ds)[3] <- "Churn"
+
+ds1 <- ds %>% filter(Age > 2 & Age <=6)
+ds2 <- ds %>% filter(Age > 6 & Age <= 12)
+ds3 <- ds %>% filter(Age > 12 & Age <=18)
+ds4 <- ds %>% filter(Age >18)
+```
+
+
+Decision Trees
+```{r}
+library(rpart)
+model1 <- rpart(Churn~.-ID-`Days Since Last Login 0-1`-Age, data = ds1, method = "class", control = rpart.control(cp=0, maxdepth=5))
+model2 <- rpart(Churn~.-ID-`Days Since Last Login 0-1`-Age, data = ds2, method = "class", control = rpart.control(cp=0, maxdepth=5))
+model3 <- rpart(Churn~.-ID-`Days Since Last Login 0-1`-Age, data = ds3, method = "class", control = rpart.control(cp=0, maxdepth=5))
+model4 <- rpart(Churn~.-ID-`Days Since Last Login 0-1`-Age, data = ds4, method = "class", control = rpart.control(cp=0, maxdepth=5))
+
+
+```
+
+#Plot decision tree & complexity plot
+```{r}
+library(rpart.plot)
+par(mfrow=c(1,4))
+rpart.plot(model1)
+rpart.plot(model2)
+rpart.plot(model3)
+rpart.plot(model4)
+
+```
+
+
